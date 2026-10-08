@@ -10,7 +10,7 @@ const ICON_TOOLS = [
     ["/icon/icon_html.png", "HTML icon"],
     ["/icon/icon_css.png", "CSS icon"],
     ["/icon/icon_js.png", "JS icon"],
-    ["/icon/icon_node.png", "Node.JS icon"],
+    ["/icon/icon_node.png", "NodeJS icon"],
     ["/icon/icon_vscode.png", "Visual Studio Code icon"],
     ["/icon/icon_idea.png", "IntelliJ IDEA icon"]
 ];
