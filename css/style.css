@@ -68,7 +68,7 @@ div.column {
 /* --- */
 
 div.outer-tools {
-    --tool-size: max(28rem,28vh);
+    --tool-size: max(30rem,30vh);
     --anim-time: 10s;
     --rot-extent: 360deg;
 
@@ -126,7 +126,7 @@ div.dynamic-tools-outline {
 }
 
 div.dynamic-ring-outline {
-    --tool-smile: 35%;
+    --tool-smile: 0%;
 
     position: absolute;
     left: 50%;
@@ -236,7 +236,7 @@ h1 {
 
 p {
     color: var(--grey);
-    font-size: max(1.40rem,1.40vh);
+    font-size: max(1.30rem,1.60vh);
     line-height: max(2.80rem, 2.80vh);
     font-weight: normal;
 }
