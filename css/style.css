@@ -1,5 +1,5 @@
 :root {
-    --main-inset: min(10rem,12vw);
+    --main-inset: min(8rem,12vw);
     --grid-spacing: 12rem;
 
     --light: #F6F6F3;
@@ -49,12 +49,12 @@ section > div {
     margin-left: auto;
     margin-right: auto;
     flex: 1;
-    min-width: 30rem;
+    min-width: 20rem;
     outline: var(--debug) solid green;
 }
 
 section > div.wide {
-    min-width: 50rem;
+    min-width: 40rem;
 }
 
 div.column {
@@ -68,7 +68,7 @@ div.column {
 /* --- */
 
 div.outer-tools {
-    --tool-size: 38rem;
+    --tool-size: max(28rem,28vh);
     --anim-time: 10s;
     --rot-extent: 360deg;
 
@@ -126,7 +126,7 @@ div.dynamic-tools-outline {
 }
 
 div.dynamic-ring-outline {
-    --tool-smile: 50%;
+    --tool-smile: 35%;
 
     position: absolute;
     left: 50%;
@@ -156,6 +156,7 @@ div.dynamic-ring-outline {
 
 img.icon-tool {
     --anim-delay: 0s;
+    --tool-icon-size: max(3.50rem, 3.50vh);
 
     position: absolute;
     left: 50%;
@@ -163,7 +164,7 @@ img.icon-tool {
     transform: translate(-50%, 0);
 
     margin: 0;
-    width: 5rem;
+    width: var(--tool-icon-size);
     height: auto;
 
     opacity: 0;
@@ -213,8 +214,8 @@ img.icon-tool {
 
 @keyframes tools-expand-orbit {
     0% {width: 0;}
-    20% {width: 5rem;}
-    80% {width: 5rem;}
+    20% {width: var(--tool-icon-size);}
+    80% {width: var(--tool-icon-size);}
     100% {width: 0;}
 }
 
@@ -228,15 +229,15 @@ h1, h2, p {
 
 h1 {
     color: var(--onyx);
-    font-size: 5rem;
-    line-height: 7.4rem;
+    font-size: max(4.20rem, 4.20vh);
+    line-height: max(5.40rem, 5.40vh);
     font-weight: normal;
 }
 
 p {
     color: var(--grey);
-    font-size: 1.8rem;
-    line-height: 3.6rem;
+    font-size: max(1.40rem,1.40vh);
+    line-height: max(2.80rem, 2.80vh);
     font-weight: normal;
 }
 
