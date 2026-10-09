@@ -1,15 +1,17 @@
 :root {
-    --main-inset: min(8rem,12vw);
-    --grid-spacing: 12rem;
+    --main-inset: clamp(4rem, 4rem + 4vw, 10rem);
+    --grid-spacing: clamp(6rem, -6rem + 18vw + 2vh, 18rem);
 
     --light: #F6F6F3;
     --dust: #D3D0CB;
+    --smoke: #868786;
     --grey: #393E41;
     --onyx: #131516;
     --debug: 0px;
 }
 
 html, body {
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
 }
@@ -68,16 +70,19 @@ div.column {
 /* --- */
 
 div.outer-tools {
-    --tool-size: max(30rem,30vh);
+    --tool-size: clamp(10rem, -6rem + 26vw + 24vh, 48rem);
     --anim-time: 10s;
     --rot-extent: 360deg;
 
+    min-width:var(--tool-size);
     max-width: var(--tool-size);
-    max-height: var(--tool-size);
 
     display: flex;
+    flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
+
+    gap: 4rem;
 
     position: relative;
 }
@@ -89,6 +94,7 @@ div.dynamic-tools {
     min-height: 0;
     width: var(--tool-size);
     height: var(--tool-size);
+    max-height: var(--tool-size);
 
     animation: tools-zoom-in 1200ms ease-in-out;
 }
@@ -110,53 +116,9 @@ div.dynamic-ring {
     animation-delay: var(--anim-delay);
 }
 
-div.dynamic-tools-outline {
-    position: absolute;
-
-    min-width: 0;
-    min-height: 0;
-    width: var(--tool-size);
-    height: var(--tool-size);
-}
-
-@property --tool-smile {
-    syntax: '<percentage>';
-    initial-value: 0%;
-    inherits: false;
-}
-
-div.dynamic-ring-outline {
-    --tool-smile: 0%;
-
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
-    min-width: 0;
-    min-height: 0;
-    width: calc(var(--tool-size) + 4rem);
-    height: calc(var(--tool-size) + 4rem);
-
-    border-radius: 100%;
-    border: double 2px transparent;
-    background-image: linear-gradient(var(--light), var(--light)), radial-gradient(circle at bottom, var(--dust), transparent var(--tool-smile));
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-
-    animation: tools-smile-outline 1200ms ease-in-out;
-
-    z-index: -1;
-}
-
-@keyframes tools-smile-outline {
-    0% {opacity: 0; --tool-smile: 0%; width: calc(var(--tool-size) - 4rem); height: calc(var(--tool-size) - 4rem);}
-    100% {opacity: 1;}
-}
-
 img.icon-tool {
     --anim-delay: 0s;
-    --tool-icon-size: max(3.50rem, 3.50vh);
+    --tool-icon-size: clamp(2.00rem, 1.60rem + 1vw + 1.20vh, 5.50rem);
 
     position: absolute;
     left: 50%;
@@ -172,6 +134,14 @@ img.icon-tool {
     border: var(--debug) solid var(--grey);
     animation: tools-orbit var(--anim-time) linear, tools-expand-orbit var(--anim-time) ease-in-out;
     animation-delay: var(--anim-delay);
+}
+
+div.descriptor-tools {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 @keyframes tools-zoom-in {
@@ -221,6 +191,73 @@ img.icon-tool {
 
 /* --- */
 
+button {
+    transition: 100ms color ease-in-out, 100ms background ease-in-out;
+}
+
+button.regular {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    margin: 0;
+    padding: 0.05rem 1.20rem;
+
+    background: none;
+    outline: none;
+
+    font-size: clamp(0.50rem, 0.40rem + 0.20vw + 0.50vh, 1.20rem);
+    line-height: clamp(1.40rem, 1.00rem + 0.20vw + 0.80vh, 2.40rem);
+
+    color: var(--smoke);
+    border: 1px solid var(--dust);
+    border-radius: 0.2rem;
+
+}
+
+button.circular {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+
+    width: 1.75rem;
+    height: 1.75rem;
+
+    background: var(--dust);
+    outline: none;
+    border: none;
+    border-radius: 100%;
+}
+
+button:hover {
+    cursor: pointer;
+    background: var(--smoke);
+}
+
+button:active {
+    animation: 1s button-press ease-in-out;
+}
+
+svg {
+    transition: fill 100ms ease-in-out;
+}
+
+svg.icon-pause, svg.icon-play {
+    margin: 0;
+    padding: 0;
+
+    width: auto;
+    height: 1.00rem;
+
+    fill: var(--grey);
+}
+
+/* --- */
+
 h1, h2, p {
     outline: var(--debug) solid var(--dust);
     margin: 0;
@@ -228,21 +265,27 @@ h1, h2, p {
 }
 
 h1 {
-    color: var(--onyx);
-    font-size: max(4.20rem, 4.20vh);
-    line-height: max(5.40rem, 5.40vh);
+    color: var(--grey);
+    font-size: clamp(2.40rem, 2.40rem + 0.20vw + 2vh, 4.80rem);
+    line-height: clamp(4.40rem, 4.20rem + 0.50vw + 2vh, 6.20rem);
     font-weight: normal;
 }
 
 p {
-    color: var(--grey);
-    font-size: max(1.30rem,1.60vh);
-    line-height: max(2.80rem, 2.80vh);
+    color: var(--smoke);
+    font-size: clamp(0.80rem, 0.60rem + 0.30vw + 1vh, 2.00rem);
+    line-height: clamp(2.00rem, 1.80rem + 0.60vw + 1.20vh, 3.80rem);
     font-weight: normal;
 }
 
-p.narrow {
-    width: 90%;
+p.small {
+    color: var(--smoke);
+    font-size: clamp(0.60rem, 0.50rem + 0.20vw + 0.40vh, 1.40rem);
+    line-height: clamp(1.40rem, 1.20rem + 0.20vw + 0.80vh, 2.60rem);
+}
+
+p.dark {
+    color: var(--onyx);
 }
 
 .serif {

@@ -76,3 +76,8 @@ $('document').ready(function() {
     // Create the dynamic tool animation.
     createTools(7, 1200);
 });
+
+// TODO
+// Reset tools animation resize or refocus
+// Enable and disable animation through button toggle presses.
+// Add text below the pause/play button displaying the current tool.
