@@ -81,3 +81,5 @@ $('document').ready(function() {
 // Reset tools animation resize or refocus
 // Enable and disable animation through button toggle presses.
 // Add text below the pause/play button displaying the current tool.
+// Add a debug keybind.
+// Rings without animation delay?

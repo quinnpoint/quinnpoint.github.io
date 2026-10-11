@@ -74,7 +74,7 @@ div.outer-tools {
     --anim-time: 10s;
     --rot-extent: 360deg;
 
-    min-width:var(--tool-size);
+    min-width: var(--tool-size);
     max-width: var(--tool-size);
 
     display: flex;
@@ -292,6 +292,10 @@ p.dark {
     font-family: "Noto Serif", serif;
 }
 
+.mono {
+    font-family: "Oxygen Mono", serif;
+}
+
 .sans {
-    font-family: "Oxygen-Sans", sans-serif;
+    font-family: "Noto Sans", sans-serif;
 }
