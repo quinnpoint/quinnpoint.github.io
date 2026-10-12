@@ -15,71 +15,193 @@ const ICON_TOOLS = [
     ["/icon/icon_idea.png", "IntelliJ IDEA icon"]
 ];
 
-// Given an icon asset, its index in the cycle, and the delay in time between icons, make a new ring.
-function makeRing(icon, i, delay) {
+let start, t, dt;
 
-    // Create the ring and give it an appropriate delay.
+let animations = {
+    tools: {
+        playing: true,
+        spawnTime: 0,
+        cycleTime: 0,
+        iconIndex: 0
+    }
+};
+
+let objects = {
+    tools_rings: []
+};
+
+let timers = {
+    tools_ringSpawn: 0
+};
+
+class Ring {
+
+    // Create a Ring with a lifetime and icon child.
+    constructor(self, child, lifetime) {
+        this.age = 0.0;
+        this.elderly = false;
+        this.lifetime = lifetime;
+
+        this.self = self;
+        this.child = child;
+        this.dead = false;
+    }
+
+    // Destroy the ring and its child.
+    destroy() {
+        this.dead = true;
+        $(this.self).remove();
+    }
+
+    // Animate this frame for the ring.
+    #animateMe() {
+        $(this.self).css({ // Rotate the ring.
+            transform: `translate(-50%, -50%) rotate(${this.age/this.lifetime*360}deg)`
+        });
+    }
+
+    // Animate this frame for the icon.
+    #animateChild() {
+        $(this.child).css({ // Rotate the icon.
+            transform: `translate(-50%, 0%) rotate(${-this.age/this.lifetime*360}deg)`
+        });
+    }
+
+    // Animate this frame.
+    animate() {
+        this.#animateMe();
+        this.#animateChild();
+    }
+
+    // Age the Ring.
+    mature(dt) {
+        if(!dt || typeof dt != "number") return;
+
+        this.age += dt; // Increment the age.
+        if(this.lifetime * 0.80 <= this.age && !this.elderly) this.#close(); // Run any closing animations before lifetime ends.
+        if(this.age > this.lifetime) this.destroy(); // Destroy the Ring when life finishes.
+    }
+
+    // Run any starting animations.
+    start() {
+
+        // Expand ring.
+        $(this.self).css({width: "1rem", height: "1rem"});
+        $(this.self).animate({
+            width: "100%",
+            height: "100%"
+        }, this.lifetime * 0.20, 'easeOutQuad');
+
+        // Fade in icon.
+        $(this.child).css({opacity: 0});
+        $(this.child).animate({
+            opacity: 1
+        }, this.lifetime * 0.20, 'linear');
+
+    }
+
+    #close() {
+        this.elderly = true; // Make elderly.
+
+        // Fade out and shrink icon.
+        $(this.child).animate({
+            opacity: 0,
+            width: 0
+        }, this.lifetime * 0.20, 'easeInQuad');
+    }
+}
+
+function stepTools(dt) {
+    if(!animations["tools"].playing) return;
+
+    // Spawn another Ring on a timer.
+    if(timers["tools_ringSpawn"] <= 0) {
+        timers["tools_ringSpawn"] = animations["tools"].spawnTime; // Reset timer.
+
+        let iconIndex = animations["tools"].iconIndex;
+        let ring = makeRing(ICON_TOOLS[iconIndex], animations["tools"].cycleTime); // Make new ring.
+        ring.start(); // Run any starting Ring animations.
+
+        animations["tools"].iconIndex = (iconIndex + 1) % ICON_TOOLS.length; // Increment the icon index.
+    } else {
+        // Decrease time left on timer.
+        timers["tools_ringSpawn"] -= dt;
+    }
+
+    // For every Ring, animate it and age it.
+    objects["tools_rings"].forEach((ring, i) => {
+        if(!ring) return;
+
+        // Remove the Ring from the array if dead.
+        if(ring.dead) {
+            objects["tools_rings"].splice(i,1);
+            return;
+        }
+
+        // Animate and age the Ring.
+        ring.animate();
+        ring.mature(dt);
+    });
+}
+
+function step(timestamp) {
+    if (start === undefined) start = timestamp;
+
+    // Update time and delta time.
+    dt = timestamp - t - start;
+    t = timestamp - start;
+
+    //console.log("ts: " + timestamp, "\nstart: " + start, "\nt: " + t, "\ndt: " + dt);
+
+    // Ensure delta time is ready.
+    if(!dt || typeof dt != "number") {
+        requestAnimationFrame(step);
+        return;
+    }
+
+    // Step the tool animation.
+    stepTools(dt);
+
+    requestAnimationFrame(step);
+}
+
+function makeRing(icon, lifetime) {
+
+    // Create a ring object.
     let ring = $(`<div class="dynamic-ring" data-icon="${icon[1]}">`);
-    ring.attr("style", `--anim-delay: ${i*delay}ms`);
     ring.appendTo('.dynamic-tools'); // Append the ring to the container.
 
-    // Create the icon and give it an appropriate delay.
+    // Create an icon object.
     let img = $(`<img class="icon-tool" alt="${icon[1]}">`);
-    img.attr("style", `--anim-delay: ${i*delay}ms`);
     img.attr('src', icon[0]);
     img.appendTo($(ring)); // Append the icon to the ring.
 
-    // Once the ring completes its orbit, destroy it.
-    console.log(icon[0] + ": waiting " + delay*(ICON_TOOLS.length+i));
-    setTimeout(() => {
-        console.log(icon[0] + " removed!");
-        $(ring).remove();
-    }, delay*(ICON_TOOLS.length+i) );
+    let ringObject = new Ring($(ring), $(img), lifetime);
+    objects["tools_rings"].push(ringObject); // Add the Ring to an array.
+
+    // Return the created Ring object.
+    return ringObject;
 
 }
 
-// Given an icon asset, its index in the cycle, the delay in time between icons, and a prewarm number, make a new ring.
-function makeWarmRing(icon, i, delay, pre) {
-    // In the call, subtract the prewarm number from the index to progress the animation ahead if needed.
-    makeRing(icon, i-pre, delay);
-}
-
-// Create multiple orbiting icons given a time delay between icons and a prewarm number to start the animation in progress when opened.
-function createTools(prewarm, delay) {
-
-    // Create the prewarm rings and icons.
-    ICON_TOOLS.forEach((icon, i) => {
-        makeWarmRing(icon, i, delay, prewarm)
-    });
-
-    // Wait for the prewarm rings to finish their cycle around the orbit.
-    setTimeout(() =>
-        {
-            // Once finished waiting, create a new set of rings and icons.
-            ICON_TOOLS.forEach((icon, i) => {makeRing(icon, i, delay)});
-
-            // Once every cycle finishes from now on, create a new set of rings and icons.
-            setInterval(
-                ()=> {
-                    ICON_TOOLS.forEach((icon, i) => {makeRing(icon, i, delay)});
-                }, ICON_TOOLS.length * delay
-            );
-
-        }, (ICON_TOOLS.length-prewarm) * delay
-    );
-
+function createTools(prewarm, delay, cycleTime) {
+    $(".outer-tools").css("--anim-time", `${cycleTime}ms`);
+    animations["tools"].spawnTime = delay;
+    animations["tools"].cycleTime = cycleTime;
+    requestAnimationFrame(step);
 }
 
 // When the document begins, start any animations.
 $('document').ready(function() {
 
     // Create the dynamic tool animation.
-    createTools(7, 1200);
+    createTools(7, 1200, 10000);
+
 });
 
 // TODO
-// Reset tools animation resize or refocus
+// Refactor tools animation
 // Enable and disable animation through button toggle presses.
 // Add text below the pause/play button displaying the current tool.
 // Add a debug keybind.
-// Rings without animation delay?
+// Comments!!

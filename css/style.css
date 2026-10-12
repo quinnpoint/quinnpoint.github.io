@@ -71,8 +71,8 @@ div.column {
 
 div.outer-tools {
     --tool-size: clamp(10rem, -6rem + 26vw + 24vh, 48rem);
-    --anim-time: 10s;
-    --rot-extent: 360deg;
+    --tool-icon-size: clamp(2.00rem, 1.60rem + 1vw + 1.20vh, 5.50rem);
+    --anim-time: 0;
 
     min-width: var(--tool-size);
     max-width: var(--tool-size);
@@ -81,6 +81,8 @@ div.outer-tools {
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
+
+    overflow: visible;
 
     gap: 4rem;
 
@@ -96,7 +98,7 @@ div.dynamic-tools {
     height: var(--tool-size);
     max-height: var(--tool-size);
 
-    animation: tools-zoom-in 1200ms ease-in-out;
+    animation: tools-zoom 1200ms ease-in-out;
 }
 
 div.dynamic-ring {
@@ -105,21 +107,17 @@ div.dynamic-ring {
     top: 50%;
     transform: translate(-50%, -50%);
 
+    overflow: visible !important;
+
     min-width: 0;
     min-height: 0;
     width: var(--tool-size);
     height: var(--tool-size);
     border-radius: 100%;
     outline: var(--debug) solid lightblue;
-
-    animation: tools-turn var(--anim-time) linear, tools-expand-ring calc(var(--anim-time) * 0.20) ease-out;
-    animation-delay: var(--anim-delay);
 }
 
 img.icon-tool {
-    --anim-delay: 0s;
-    --tool-icon-size: clamp(2.00rem, 1.60rem + 1vw + 1.20vh, 5.50rem);
-
     position: absolute;
     left: 50%;
     top: 0;
@@ -131,9 +129,11 @@ img.icon-tool {
 
     opacity: 0;
 
+    overflow: visible !important;
+
     border: var(--debug) solid var(--grey);
-    animation: tools-orbit var(--anim-time) linear, tools-expand-orbit var(--anim-time) ease-in-out;
-    animation-delay: var(--anim-delay);
+
+    animation: tools-icon-zoom calc(var(--anim-time) * 0.20) ease-in-out;
 }
 
 div.descriptor-tools {
@@ -144,49 +144,14 @@ div.descriptor-tools {
     gap: 1rem;
 }
 
-@keyframes tools-zoom-in {
+@keyframes tools-zoom {
     0% {opacity: 0; scale: 0.50;}
     100% {opacity: 1; scale: 1.00;}
 }
 
-@keyframes tools-turn {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-    100% {
-        transform: translate(-50%, -50%) rotate(var(--rot-extent));
-    }
-}
-
-@keyframes tools-expand-ring {
-    0% {
-        width: 1rem;
-        height: 1rem;
-    }
-    100% {
-        width: var(--tool-size);
-        height: var(--tool-size);
-    }
-}
-
-@keyframes tools-orbit {
-    0% {
-        transform: translate(-50%, 0%) rotate(0deg);
-        opacity: 0;
-    }
-    20% {opacity: 1;}
-    80% {opacity: 1;}
-    100% {
-        transform: translate(-50%, 0%) rotate(calc(-1 * var(--rot-extent)));
-        opacity: 0;
-    }
-}
-
-@keyframes tools-expand-orbit {
+@keyframes tools-icon-zoom {
     0% {width: 0;}
-    20% {width: var(--tool-icon-size);}
-    80% {width: var(--tool-icon-size);}
-    100% {width: 0;}
+    100% {width: var(--tool-icon-size);}
 }
 
 /* --- */
